@@ -1,0 +1,42 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: deployment-example
+  name: deployment-example
+spec:
+  selector:
+    matchLabels:
+      app: deployment-example
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: deployment-example
+    spec:
+      serviceAccountName: acm-demo
+      containers:
+      - image: quay.io/akrohg/acm-demo:v1
+        imagePullPolicy: IfNotPresent
+        name: deployment-example
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        resources: {}
+        env:
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30

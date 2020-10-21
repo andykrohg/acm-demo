@@ -1,0 +1,18 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: deployment-example
+  name: deployment-example
+spec:
+  ports:
+  - name: 8080-tcp
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: deployment-example
+    deploymentconfig: deployment-example
+  sessionAffinity: None
+  type: ClusterIP
