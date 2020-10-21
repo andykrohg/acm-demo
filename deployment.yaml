@@ -21,7 +21,7 @@ spec:
     spec:
       serviceAccountName: acm-demo
       containers:
-      - image: quay.io/akrohg/acm-demo:v1
+      - image: quay.io/akrohg/acm-demo:v2
         imagePullPolicy: IfNotPresent
         name: deployment-example
         ports:
