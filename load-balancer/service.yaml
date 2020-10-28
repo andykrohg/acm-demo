@@ -3,8 +3,8 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: httpd
-  name: httpd
+    app: load-balancer
+  name: load-balancer
 spec:
   ports:
   - name: 8080-tcp
@@ -12,6 +12,6 @@ spec:
     protocol: TCP
     targetPort: 8080
   selector:
-    app: httpd
+    app: load-balancer
   sessionAffinity: None
   type: ClusterIP

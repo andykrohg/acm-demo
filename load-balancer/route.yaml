@@ -3,13 +3,13 @@ apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
   labels:
-    app: httpd
-  name: httpd
+    app: load-balancer
+  name: load-balancer
 spec:
   port:
     targetPort: 8080-tcp
   to:
     kind: Service
-    name: httpd
+    name: load-balancer
     weight: 100
   wildcardPolicy: None

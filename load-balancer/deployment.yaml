@@ -3,12 +3,12 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: httpd
-  name: httpd
+    app: load-balancer
+  name: load-balancer
 spec:
   selector:
     matchLabels:
-      app: httpd
+      app: load-balancer
   strategy:
     rollingUpdate:
       maxSurge: 25%
@@ -17,7 +17,7 @@ spec:
   template:
     metadata:
       labels:
-        app: httpd
+        app: load-balancer
     spec:
       containers:
       - image: registry.redhat.io/rhel8/httpd-24:latest
