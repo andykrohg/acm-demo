@@ -1,4 +1,4 @@
-namespace: devsecops
+namespace: acm-demo
 
 resources:
 - namespace.yaml
