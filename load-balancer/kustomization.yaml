@@ -1,0 +1,8 @@
+namespace: acm-demo
+
+resources:
+- namespace.yaml
+- config-map.yaml
+- deployment.yaml
+- service.yaml
+- route.yaml
