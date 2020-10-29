@@ -6,6 +6,7 @@ metadata:
     app: load-balancer
   name: load-balancer
 spec:
+  replicas: 3
   selector:
     matchLabels:
       app: load-balancer
@@ -42,3 +43,5 @@ spec:
       schedulerName: default-scheduler
       securityContext: {}
       terminationGracePeriodSeconds: 30
+    triggers:
+    - type: ConfigChange

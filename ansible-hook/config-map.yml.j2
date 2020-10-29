@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: load-balancer-config
+  namespace: acm-demo
+data:
+  load-balancer.conf: |
+    <Proxy "balancer://mycluster">
+    {{ load_balancer_members | join('\n    ') }}
+    </Proxy>
+    ProxyPass        "/" "balancer://mycluster"
+    ProxyPassReverse "/" "balancer://mycluster"
