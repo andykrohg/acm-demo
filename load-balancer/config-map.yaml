@@ -5,7 +5,6 @@ metadata:
 data:
   load-balancer.conf: |
     <Proxy "balancer://mycluster">
-        BalancerMember "http://deployment-example-acm-demo.apps.cluster-8cad.8cad.example.opentlc.com"
     </Proxy>
     ProxyPass        "/" "balancer://mycluster"
     ProxyPassReverse "/" "balancer://mycluster"

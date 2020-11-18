@@ -24,9 +24,6 @@
       load_balancer_conf: "{{ load_balancer_config_map.resources[0].data['load-balancer.conf'] }}"
 
   - set_fact:
-      new_endpoint: http://deployment-example-gitea-operator-system-2.apps.cluster-32f3.32f3.example.opentlc.com
-
-  - set_fact:
       load_balancer_members: "{{ load_balancer_conf.split('\n') | select('match', '^ {4}BalancerMember') | list }}"
 
   - set_fact:
