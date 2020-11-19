@@ -3,11 +3,9 @@ apiVersion: tower.ansible.com/v1alpha1
 kind: AnsibleJob
 metadata:
   name: httpd-update-loadbalancer
+  namespace: acm-demo
   labels:
     app.kubernetes.io/name: httpd-update-loadbalancer 
 spec:
   tower_auth_secret: tower-secret
   job_template_name: httpd-lb-update
-  extra_vars:
-    endpoints: 
-    - http://deployment-example-gitea-operator-system-2.apps.cluster-32f3.32f3.example.opentlc.com

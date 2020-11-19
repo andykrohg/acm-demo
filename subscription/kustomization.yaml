@@ -1,6 +1,7 @@
 namespace: acm-demo
 
 resources:
+- namespace.yaml
 - application.yaml
 - channel.yaml
 - subscription.yaml
