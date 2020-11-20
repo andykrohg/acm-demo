@@ -2,9 +2,6 @@
 - hosts: localhost
   tasks:
   - set_fact:
-      endpoints: 
-      - http://deployment-example-acm-demo.apps.cluster-naps-5e4e.naps-5e4e.sandbox1367.opentlc.com
-      - http://deployment-example-acm-demo.apps.cluster-3c03.3c03.example.opentlc.com
       load_balancer_members: []
 
   - name: Create Balancer Members
@@ -16,11 +13,13 @@
 
   - name: Create immutable ConfigMap containing new BalancerMember
     k8s:
+      validate_certs: no
       definition: "{{ lookup('template', './config-map.yml.j2') }}"
       append_hash: true
   
   - name: Patch Deployment to use new ConfigMap
     k8s:
+      validate_certs: no
       definition: |
         apiVersion: apps/v1
         kind: Deployment

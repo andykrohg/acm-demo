@@ -1,0 +1,56 @@
+---
+- hosts: localhost
+  tasks: 
+  - set_fact:
+      tower_server: https://ansible-tower-web-svc-tower.apps.cluster-3c03.3c03.example.opentlc.com
+      tower_username: admin
+      tower_password: password
+      acm_hub_cluster_username: kubeadmin
+      acm_hub_cluster_password: system
+      acm_hub_cluster_api_server: https://api.cluster-56f5.56f5.example.opentlc.com:6443
+      endpoints: 
+      - http://deployment-example-acm-demo.apps.cluster-naps-5e4e.naps-5e4e.sandbox1367.opentlc.com
+      - http://deployment-example-acm-demo.apps.cluster-3c03.3c03.example.opentlc.com
+
+  - name: Create access token
+    uri:
+      url: '{{ tower_server }}/api/v2/tokens/'
+      body_format: json
+      body: '{}'
+      method: POST
+      headers:
+        Authorization: "Basic {{ (tower_username + ':' + tower_password) | b64encode }}"
+      status_code: 201
+    register: token_response
+
+  - set_fact:
+      tower_token: "{{ token_response.json.token }}"
+
+  - name: Create acm-demo Project
+    uri:
+      url: '{{ tower_server }}/api/v2/organizations/1/projects/'
+      body_format: json
+      body: '{{ lookup("template", "./tower_project.yml.j2") | from_yaml }}'
+      method: POST
+      headers:
+        Authorization: 'Bearer {{ tower_token }}'
+      status_code: 201
+    register: project_response
+  
+  - name: Wait a lil moment to allow the project to sync
+    pause:
+      seconds: 15
+
+  - name: Create Job Template
+    uri:
+      url: '{{ tower_server }}/api/v2/organizations/1/job_templates/'
+      body_format: json
+      body: '{{ lookup("template", "./job_template.yml.j2") | from_yaml }}'
+      method: POST
+      headers:
+        Authorization: 'Bearer {{ tower_token }}'
+      status_code: 201
+
+    # Install Ansible Resource Operator in all clusters
+    # Create tower secret in all clusters
+
