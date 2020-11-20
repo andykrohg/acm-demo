@@ -12,7 +12,18 @@
       - http://deployment-example-acm-demo.apps.cluster-naps-5e4e.naps-5e4e.sandbox1367.opentlc.com
       - http://deployment-example-acm-demo.apps.cluster-3c03.3c03.example.opentlc.com
 
-  - name: Create access token
+  - name: Get an OCP token
+    community.kubernetes.k8s_auth:
+      username: "{{ acm_hub_cluster_username }}"
+      password: "{{ acm_hub_cluster_password }}"
+      host: "{{ acm_hub_cluster_api_server }}"
+      validate_certs: no
+    register: k8s_auth_result
+
+  - set_fact:
+      ocp_token: '{{ k8s_auth_result.k8s_auth.api_key }}'
+
+  - name: Create Tower access token
     uri:
       url: '{{ tower_server }}/api/v2/tokens/'
       body_format: json
