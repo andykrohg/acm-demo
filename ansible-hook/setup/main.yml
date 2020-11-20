@@ -1,0 +1,66 @@
+---
+- hosts: localhost
+  vars:
+    tower_server: https://ansible-tower-web-svc-tower.apps.cluster-3c03.3c03.example.opentlc.com
+    tower_username: admin
+    tower_password: password
+
+    # Managed Clusters - including local hub cluster
+    managed_ocp_clusters:
+    - cluster_domain: cluster-3c03.3c03.example.opentlc.com
+      username: kubeadmin
+      password: password
+    - cluster_domain: cluster-naps-5e4e.naps-5e4e.sandbox1367.opentlc.com
+      username: kubeadmin
+      password: password
+  tasks: 
+  - set_fact:
+      endpoints: "{{ ['http://deployment-example-acm-demo.apps.'] | product(managed_ocp_clusters | map(attribute='cluster_domain') | list) | map('join') | list }}"
+
+  # Build out Tower Resources
+  - name: Create Tower access token
+    uri:
+      url: '{{ tower_server }}/api/v2/tokens/'
+      body_format: json
+      body: '{}'
+      method: POST
+      headers:
+        Authorization: "Basic {{ (tower_username + ':' + tower_password) | b64encode }}"
+      status_code: 201
+    register: token_response
+
+  - set_fact:
+      tower_token: "{{ token_response.json.token }}"
+
+  - name: Create acm-demo Project
+    uri:
+      url: '{{ tower_server }}/api/v2/organizations/1/projects/'
+      body_format: json
+      body: '{{ lookup("template", "./templates/tower_project.yml.j2") | from_yaml }}'
+      method: POST
+      headers:
+        Authorization: 'Bearer {{ tower_token }}'
+      status_code: 201,400
+    register: project_response
+  
+  - name: Wait a lil moment to allow the project to sync
+    pause:
+      seconds: 15
+
+  - name: Create Job Template
+    uri:
+      url: '{{ tower_server }}/api/v2/organizations/1/job_templates/'
+      body_format: json
+      body: '{{ lookup("template", "./templates/job_template.yml.j2") | from_yaml }}'
+      method: POST
+      headers:
+        Authorization: 'Bearer {{ tower_token }}'
+      status_code: 201,400
+    ignore_errors: true
+
+  - name: 'Create relevant assets in {{ cluster.cluster_domain }}'
+    include_tasks: create_ocp_resources.yml
+    loop: '{{ managed_ocp_clusters }}'
+    loop_control:
+      loop_var: cluster
+      label: '{{ cluster.cluster_domain }}'

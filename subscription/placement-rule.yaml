@@ -7,6 +7,6 @@ metadata:
   name: demo-app-placement-0
   namespace: acm-demo
 spec:
-  clusterConditions:
-    - type: ManagedClusterConditionAvailable
-      status: "True"
+  clusterSelector:
+    matchLabels:
+      'local-cluster': 'true'

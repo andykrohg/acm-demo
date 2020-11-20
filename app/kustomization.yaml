@@ -2,7 +2,6 @@ namespace: acm-demo
 
 resources:
 - service_account.yaml
-# - cluster_role_binding.yaml
 - deployment.yaml
 - service.yaml
 - route.yaml
