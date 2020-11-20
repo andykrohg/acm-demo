@@ -1,0 +1,12 @@
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  labels:
+    app: demo-app
+  name: demo-app-placement-0
+  namespace: acm-demo
+spec:
+  clusterSelector:
+    matchLabels:
+      'local-cluster': 'true'

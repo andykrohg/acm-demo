@@ -1,0 +1,9 @@
+- name: Check if {{ endpoint }} is up
+  uri:
+    url: "{{ endpoint }}"
+    status_code: 200,503
+  register: response
+
+- set_fact:
+    load_balancer_members: "{{ load_balancer_members + ['    BalancerMember \"' + endpoint + '\"'] }}"
+  when: response.status == 200
