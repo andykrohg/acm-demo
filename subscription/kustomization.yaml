@@ -1,0 +1,7 @@
+namespace: acm-demo
+
+resources:
+- application.yaml
+- channel.yaml
+- subscription.yaml
+- placement-rule.yaml

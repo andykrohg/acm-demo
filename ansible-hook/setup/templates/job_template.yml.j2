@@ -1,0 +1,9 @@
+type: job_template
+name: httpd-lb-update
+description: Update Apache Httpd Load Balancer Configuration
+inventory: 1
+project: {{ project_response.json.id }}
+playbook: ansible-hook/update-lb-config.yml
+extra_vars: "{{ '---\\nendpoints: \\n- ' + endpoints | join('\\n- ') }}"
+ask_variables_on_launch: true
+ask_inventory_on_launch: true

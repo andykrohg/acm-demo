@@ -1,0 +1,12 @@
+---
+apiVersion: tower.ansible.com/v1alpha1
+kind: AnsibleJob
+metadata:
+  name: httpd-update-loadbalancer
+  namespace: acm-demo
+  labels:
+    app.kubernetes.io/name: httpd-update-loadbalancer
+    app: demo-app
+spec:
+  tower_auth_secret: tower-secret
+  job_template_name: httpd-lb-update
