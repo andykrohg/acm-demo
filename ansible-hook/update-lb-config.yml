@@ -1,5 +1,7 @@
 ---
 - hosts: localhost
+  vars:
+    ansible_python_interpreter: /var/lib/awx/venv/ansible/bin/python
   tasks:
   - set_fact:
       load_balancer_members: []
