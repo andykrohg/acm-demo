@@ -3,6 +3,10 @@
     url: "{{ endpoint }}"
     status_code: 200,503
   register: response
+  until: response.status == 200
+  retries: 5
+  delay: 3
+  ignore_errors: true
 
 - set_fact:
     load_balancer_members: "{{ load_balancer_members + ['    BalancerMember \"' + endpoint + '\"'] }}"
