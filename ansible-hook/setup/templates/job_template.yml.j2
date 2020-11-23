@@ -4,6 +4,6 @@ description: Update Apache Httpd Load Balancer Configuration
 inventory: 1
 project: {{ project_response.json.id }}
 playbook: ansible-hook/update-lb-config.yml
-extra_vars: "{{ '---\\nendpoints: \\n- ' + endpoints | join('\\n- ') }}"
+extra_vars: "{{ '---\\nhub_ocp_token: ' + hub_ocp_token + '\\nhub_api_server: https://api.' + hub_cluster.cluster_domain + ':6443\\nendpoints: \\n- ' + endpoints | join('\\n- ') }}"
 ask_variables_on_launch: true
 ask_inventory_on_launch: true

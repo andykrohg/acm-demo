@@ -15,12 +15,16 @@
 
   - name: Create immutable ConfigMap containing new BalancerMember
     k8s:
+      host: '{{ hub_api_server }}'
+      api_key: '{{ hub_ocp_token }}'
       validate_certs: no
       definition: "{{ lookup('template', './config-map.yml.j2') }}"
       append_hash: true
   
   - name: Patch Deployment to use new ConfigMap
     k8s:
+      host: '{{ hub_api_server }}'
+      api_key: '{{ hub_ocp_token }}'
       validate_certs: no
       definition: |
         apiVersion: apps/v1
