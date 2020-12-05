@@ -3,7 +3,6 @@ namespace: acm-demo
 resources:
 - application.yaml
 - channel.yaml
-- subscription-stable-v1.yaml
-- subscription-feature-candidate-v1.yaml
+- subscription-v1-alpha.yaml
 - placement-stable.yaml
 - placement-feature-candidate.yaml

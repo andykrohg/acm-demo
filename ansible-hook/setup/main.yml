@@ -52,17 +52,6 @@
     pause:
       seconds: 15
 
-  - name: Create Job Template
-    uri:
-      url: '{{ tower_server }}/api/v2/organizations/1/job_templates/'
-      body_format: json
-      body: '{{ lookup("template", "./templates/job_template.yml.j2") | from_yaml }}'
-      method: POST
-      headers:
-        Authorization: 'Bearer {{ tower_token }}'
-      status_code: 201,400
-    ignore_errors: true
-
   - name: Get an OCP token for the Hub Cluster
     community.kubernetes.k8s_auth:
       username: "{{ hub_cluster.username }}"
@@ -73,6 +62,17 @@
 
   - set_fact:
       hub_ocp_token: '{{ k8s_auth_result.k8s_auth.api_key }}'
+
+  - name: Create Job Template
+    uri:
+      url: '{{ tower_server }}/api/v2/organizations/1/job_templates/'
+      body_format: json
+      body: '{{ lookup("template", "./templates/job_template.yml.j2") | from_yaml }}'
+      method: POST
+      headers:
+        Authorization: 'Bearer {{ tower_token }}'
+      status_code: 201,400
+    ignore_errors: true
 
   - name: Create Tower Secret in acm-demo namespace
     k8s:
@@ -106,7 +106,7 @@
     k8s:
       host: "https://api.{{ hub_cluster.cluster_domain }}:6443"
       validate_certs: no
-      api_key: '{{ ocp_token }}'
+      api_key: '{{ hub_ocp_token }}'
       definition: "{{ lookup('template', './templates/aapro-subscription.yml.j2') }}"
 
   - name: 'Create ClusterRolerRoleBinding in {{ cluster.cluster_domain }}'
