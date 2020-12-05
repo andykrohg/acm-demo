@@ -2,7 +2,7 @@
 apiVersion: tower.ansible.com/v1alpha1
 kind: AnsibleJob
 metadata:
-  name: httpd-update-loadbalancer
+  generateName: httpd-update-loadbalancer
   namespace: acm-demo
   labels:
     app.kubernetes.io/name: httpd-update-loadbalancer
