@@ -22,7 +22,7 @@ spec:
       serviceAccountName: acm-demo
       containers:
       - image: quay.io/akrohg/acm-demo:v1
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         name: deployment-example
         ports:
         - containerPort: 8080
