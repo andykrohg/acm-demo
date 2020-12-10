@@ -24,6 +24,9 @@ if [ $must_quit -eq 0 ]; then
         must_quit=1
       fi
     fi
+  elif [ "$1" == "--remove" ] || [ "$1" == "-r" ]; then
+    oc delete -k subscription && oc delete subscription --all -n acm-demo
+    must_quit=1
   else
     echo "Invalid option";
   fi
