@@ -20,7 +20,7 @@
       managed_ocp_clusters: '{{ [hub_cluster] + spoke_clusters }}'
   
   - set_fact:
-      endpoints: "{{ ['http://deployment-example-acm-demo.apps.'] | product(managed_ocp_clusters | map(attribute='cluster_domain') | list) | map('join') | list }}"
+      endpoints: "{{ ['http://example-acm-demo.apps.'] | product(managed_ocp_clusters | map(attribute='cluster_domain') | list) | map('join') | list }}"
 
   # Build out Tower Resources
   - name: Create Tower access token
