@@ -23,7 +23,4 @@ oc apply -f policy-resources.yaml
 # Install Gatekeeper
 oc apply -f gatekeeper.yaml
 
-# Add priviledged security context constraints for the gatekeeper-admin service account  
-oc adm policy add-scc-to-user privileged -z gatekeeper-admin -n gatekeeper-system
-
 ```
