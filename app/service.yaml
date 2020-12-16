@@ -15,3 +15,5 @@ spec:
     app: deployment-example
   sessionAffinity: None
   type: ClusterIP
+  externalIPs:
+  - 192.168.0.1
