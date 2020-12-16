@@ -10,6 +10,7 @@ fi
 
 if [ $must_quit -eq 0 ]; then
   if [ "$1" == "--subscription" ] || [ "$1" == "-s" ]; then
+    oc delete K8sExternalIPs external-ips || true
     action="-k subscription"
   elif [ "$1" == "--version" ] || [ "$1" == "-v" ]; then
     if [ -z $2 ]; then
