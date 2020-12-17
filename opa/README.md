@@ -17,3 +17,10 @@ oc apply -f gatekeeper.yaml
 oc apply -f policy-resources.yaml
 
 ```
+
+### ***NOTE:*** for every Advanced Cluster Manager spoke cluster participating in the Open Policy Agent and Gatekeeper integration run the following commands:
+```bash
+# Install Gatekeeper
+oc apply -f gatekeeper.yaml
+
+```
