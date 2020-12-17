@@ -26,20 +26,20 @@ oc get route load-balancer -n acm-demo
 > NOTE: Run all commands against your **hub cluster**.
 1. Add the app subscription:
 ```bash
-oc apply -k subscription
+./run-deployment.sh -s
 ```
 This will apply `v1` of the app to your `feature-candidate` cluster. The `AnsibleJob` should run and update the `ConfigMap` of the load balancer to target your newly deployed app. This probably takes about 4 minutes. Refresh the load balancer route in your browser to see that it's now resolving.
 2. Release `v1` to stable clusters:
 ```bash
-oc apply -f subscription/subscription-v1.yaml
+./run-deployment.sh -v v1
 ```
 This will apply `v1` of the app to all managed clusters (both `feature-candidate` and `stable`). A new `AnsibleJob` resource should be created which will update the load balancer to distribute traffic among all clusters. This may take another 4 minutes or so - refresh the load balancer a few times to see (based on the zone/provider reported by the app) that traffic distributed using a round robin strategy.
 3. Release `v2` to your feature candidate cluster:
 ```bash
-oc apply -f subscription/subscription-v2-alpha.yaml
+./run-deployment.sh -v v2-alpha
 ```
 After reconciliation, refreshing on the load balancer should show that your feature candidate cluster has been upgraded to `v2` of the app.
 4. Release `v2` to stable clusters:
 ```bash
-oc apply -f subscription/subscription-v2.yaml
+./run-deployment.sh -v v2
 ```
