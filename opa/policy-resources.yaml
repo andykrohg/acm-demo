@@ -2,6 +2,7 @@ apiVersion: policy.open-cluster-management.io/v1
 kind: Policy
 metadata:
   name: policy-gatekeeper-allowed-external-ips
+  namespace: opa
   annotations:
     policy.open-cluster-management.io/standards: NIST SP 800-53
     policy.open-cluster-management.io/categories: CM Configuration Management
@@ -107,6 +108,7 @@ apiVersion: policy.open-cluster-management.io/v1
 kind: PlacementBinding
 metadata:
   name: binding-policy-gatekeeper-allowed-external-ips
+  namespace: opa
 placementRef:
   name: placement-policy-gatekeeper-allowed-external-ips
   kind: PlacementRule
@@ -120,6 +122,7 @@ apiVersion: apps.open-cluster-management.io/v1
 kind: PlacementRule
 metadata:
   name: placement-policy-gatekeeper-allowed-external-ips
+  namespace: opa
 spec:
   clusterConditions:
   - status: "True"

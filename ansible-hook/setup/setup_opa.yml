@@ -1,0 +1,32 @@
+- name: Create opa Namespace
+  k8s:
+    host: "https://api.{{ hub_cluster.cluster_domain }}:6443"
+    validate_certs: no
+    api_key: '{{ hub_ocp_token }}'
+    definition: |
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: opa
+
+- name: Create a TLS secret for OPA
+  k8s:
+    host: "https://api.{{ hub_cluster.cluster_domain }}:6443"
+    validate_certs: no
+    api_key: '{{ hub_ocp_token }}'
+    definition: "{{ lookup('file', '../../opa/secret.yaml') }}"
+
+- name: Create a Admission Controller for OPA
+  k8s:
+    host: "https://api.{{ hub_cluster.cluster_domain }}:6443"
+    validate_certs: no
+    api_key: '{{ hub_ocp_token }}'
+    definition: "{{ lookup('file', '../../opa/admission-controller.yaml') }}"
+
+- name: Create a Webhook Configuration for OPA
+  k8s:
+    host: "https://api.{{ hub_cluster.cluster_domain }}:6443"
+    validate_certs: no
+    api_key: '{{ hub_ocp_token }}'
+    definition: "{{ lookup('file', '../../opa/admission-controller.yaml') }}"
+  
