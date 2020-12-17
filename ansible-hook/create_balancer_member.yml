@@ -1,13 +1,13 @@
-- name: Check if {{ endpoint }} is up
-  uri:
-    url: "{{ endpoint }}"
-    status_code: 200,503
-  register: response
-  until: response.status == 200
-  retries: 5
-  delay: 3
-  ignore_errors: true
+  - name: Get ManagedClusterInfo object
+    k8s_info:
+      api_version: internal.open-cluster-management.io/v1beta1
+      kind: ManagedClusterInfo
+      name: '{{ target_cluster }}'
+      namespace: '{{ target_cluster }}'
+    register: managed_cluster_info
 
-- set_fact:
-    load_balancer_members: "{{ load_balancer_members + ['    BalancerMember \"' + endpoint + '\"'] }}"
-  when: response.status == 200
+  - set_fact:
+      endpoint: '{{ managed_cluster_info.resources[0].status.consoleURL | regex_replace("https://console-openshift-console", "http://example-acm-demo")}}'
+    
+  - set_fact:
+      load_balancer_members: "{{ (load_balancer_members + ['    BalancerMember \"' + endpoint + '\"']) | unique }}"
