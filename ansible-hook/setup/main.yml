@@ -19,9 +19,6 @@
   - set_fact:
       managed_ocp_clusters: '{{ [hub_cluster] + spoke_clusters }}'
   
-  - set_fact:
-      endpoints: "{{ ['http://example-acm-demo.apps.'] | product(managed_ocp_clusters | map(attribute='cluster_domain') | list) | map('join') | list }}"
-
   # Build out Tower Resources
   - name: Create Tower access token
     uri:
@@ -107,11 +104,21 @@
       host: "https://api.{{ hub_cluster.cluster_domain }}:6443"
       validate_certs: no
       api_key: '{{ hub_ocp_token }}'
-      definition: "{{ lookup('template', './templates/aapro-subscription.yml.j2') }}"
+      definition: "{{ lookup('template', './templates/aapro-subscription.yml.j2') }}" 
 
-  - name: 'Create ClusterRolerRoleBinding in {{ cluster.cluster_domain }}'
-    include_tasks: create_clusterrolebinding.yml
+  - name: Install OPA in Hub Cluster
+    include_tasks: setup_opa.yml
+
+  - name: 'Create ClusterRolerRoleBinding and Gatekeeper install in {{ cluster.cluster_domain }}'
+    include_tasks: create_clusterrolebinding_and_gatekeeper.yml
     loop: '{{ managed_ocp_clusters }}'
     loop_control:
       loop_var: cluster
       label: '{{ cluster.cluster_domain }}'
+
+  - name: Create a External IPs Policy resources
+    k8s:
+      host: "https://api.{{ hub_cluster.cluster_domain }}:6443"
+      validate_certs: no
+      api_key: '{{ hub_ocp_token }}'
+      definition: "{{ lookup('file', '../../opa/policy-resources.yaml') }}"
