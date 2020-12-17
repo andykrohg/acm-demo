@@ -1,0 +1,50 @@
+---
+- hosts: localhost
+  # vars:
+  #   ansible_python_interpreter: /var/lib/awx/venv/ansible/bin/python
+  tasks:
+  - set_fact:
+      load_balancer_members: []
+      endpoints: []
+      target_clusters: 
+      - local-cluster
+      - azure
+
+  - name: Get ManagedClusterInfo object
+    k8s_info:
+      api_version: internal.open-cluster-management.io/v1beta1
+      kind: ManagedClusterInfo
+      name: '{{ target_cluster }}'
+      namespace: '{{ target_cluster }}'
+    register: managed_cluster_info
+
+  - set_fact:
+      endpoint: '{{ managed_cluster_info.resources[0].status.consoleURL | regex_replace("https://console-openshift-console", "http://example-acm-demo")}}'
+    
+  - set_fact:
+      load_balancer_members: "{{ (load_balancer_members + ['    BalancerMember \"' + endpoint + '\"']) | unique }}"
+
+  - name: Get load-balancer Deployment
+    k8s_info:
+      kind: Deployment
+      namespace: acm-demo
+      name: load-balancer
+    register: load_balancer_deployment
+
+  - set_fact:
+      config_map_name: "{{ load_balancer_deployment.resources[0].spec.template.spec | json_query('volumes[?name==`load-balancer-config`].configMap.name') | join }}"
+    
+  - name: Get ConfigMap
+    k8s_info:
+      kind: ConfigMap
+      namespace: acm-demo
+      name: '{{ config_map_name }}'
+    register: config_map
+
+  - set_fact:
+      load_balancer_members: '{{ config_map.resources[0].data["load-balancer.conf"] | regex_findall(expression)}}'
+    vars:
+      expression: '    BalancerMember ".*"'
+
+  - set_fact:
+      load_balancer_members: "{{ (load_balancer_members + ['    BalancerMember \"' + endpoint + '\"']) | unique }}"
