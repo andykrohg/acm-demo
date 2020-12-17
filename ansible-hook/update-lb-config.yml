@@ -10,6 +10,7 @@
     k8s_info:
       host: '{{ hub_api_server }}'
       api_key: '{{ hub_ocp_token }}'
+      validate_certs: no
       kind: Deployment
       namespace: acm-demo
       name: load-balancer
@@ -22,6 +23,7 @@
     k8s_info:
       host: '{{ hub_api_server }}'
       api_key: '{{ hub_ocp_token }}'
+      validate_certs: no
       kind: ConfigMap
       namespace: acm-demo
       name: '{{ config_map_name }}'

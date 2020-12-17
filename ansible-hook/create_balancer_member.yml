@@ -1,13 +1,16 @@
-  - name: Get ManagedClusterInfo object
-    k8s_info:
-      api_version: internal.open-cluster-management.io/v1beta1
-      kind: ManagedClusterInfo
-      name: '{{ target_cluster }}'
-      namespace: '{{ target_cluster }}'
-    register: managed_cluster_info
+- name: Get ManagedClusterInfo object
+  k8s_info:
+    host: '{{ hub_api_server }}'
+    api_key: '{{ hub_ocp_token }}'
+    validate_certs: no
+    api_version: internal.open-cluster-management.io/v1beta1
+    kind: ManagedClusterInfo
+    name: '{{ target_cluster }}'
+    namespace: '{{ target_cluster }}'
+  register: managed_cluster_info
 
-  - set_fact:
-      endpoint: '{{ managed_cluster_info.resources[0].status.consoleURL | regex_replace("https://console-openshift-console", "http://example-acm-demo")}}'
-    
-  - set_fact:
-      load_balancer_members: "{{ (load_balancer_members + ['    BalancerMember \"' + endpoint + '\"']) | unique }}"
+- set_fact:
+    endpoint: '{{ managed_cluster_info.resources[0].status.consoleURL | regex_replace("https://console-openshift-console", "http://example-acm-demo")}}'
+  
+- set_fact:
+    load_balancer_members: "{{ (load_balancer_members + ['    BalancerMember \"' + endpoint + '\"']) | unique }}"
