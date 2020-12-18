@@ -24,3 +24,16 @@
     validate_certs: no
     api_key: '{{ ocp_token }}'
     definition: "{{ lookup('file', '../../opa/gatekeeper.yaml') }}"
+
+- name: Ensure that there are no K8SExternalIPs objects
+  k8s:
+    host: "https://api.{{ cluster.cluster_domain }}:6443"
+    validate_certs: no
+    api_key: '{{ ocp_token }}'
+    api_version: constraints.gatekeeper.sh/v1beta1
+    kind: K8sExternalIPs
+    name: external-ips
+    state: absent
+  retries: 5
+  delay: 3
+  ignore_errors: true

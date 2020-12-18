@@ -1,1 +1,1 @@
-oc create configmap console-custom-logo --from-file logo-aws.png -n openshift-config
+oc create configmap console-custom-logo --from-file logo-azure.png -n openshift-config

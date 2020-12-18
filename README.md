@@ -10,17 +10,13 @@
 * Create a Secret in your **hub cluster** to authenticate to Tower
 * Subscribe to the **Ansible Automation Platform Resource Operator** in your **hub cluster**
 * Create `ClusterRoleBindings` required for the app service account to read node info and report what cloud it's running on. I previously included this in the app workload itself, but the Reconciliation failed from ACM - i suspect insufficient privileges.
+* Install Gatekeeper for managing `K8sExternalIPs` objects in all clusters
+* Install Open Policy Agent for enforcing the external-ips `Policy`
+* Installs an Apache HTTPD load balancer to your **hub cluster**. Deploy an Apache HTTPD load balancer to your **hub cluster** in the **acm-demo** namespace. This will load balance between app deployments across managed clusters. No apps have been created yet, so this should initially return a 503.
 ```bash
 ansible-playbook ansible-hook/setup/main.yml
 ```
-6. Deploy an Apache HTTPD load balancer to your **hub cluster**. This will load balance between app deployments across managed clusters. No apps have been created yet, so this should initially return a 503.
-```bash
-oc apply -k load-balancer
-```
-Grab the route:
-```bash
-oc get route load-balancer -n acm-demo
-```
+
 
 ## Performing the Demo
 > NOTE: Run all commands against your **hub cluster**.
@@ -28,18 +24,29 @@ oc get route load-balancer -n acm-demo
 ```bash
 ./run-deployment.sh -s
 ```
+
 This will apply `v1` of the app to your `feature-candidate` cluster. The `AnsibleJob` should run and update the `ConfigMap` of the load balancer to target your newly deployed app. This probably takes about 4 minutes. Refresh the load balancer route in your browser to see that it's now resolving.
 2. Release `v1` to stable clusters:
 ```bash
 ./run-deployment.sh -v v1
 ```
+
 This will apply `v1` of the app to all managed clusters (both `feature-candidate` and `stable`). A new `AnsibleJob` resource should be created which will update the load balancer to distribute traffic among all clusters. This may take another 4 minutes or so - refresh the load balancer a few times to see (based on the zone/provider reported by the app) that traffic distributed using a round robin strategy.
-3. Release `v2` to your feature candidate cluster:
+
+3. Go to Govern risk in ACM and enable the **external-ips** policy. To illustrate control over [this vulnerability](https://access.redhat.com/security/cve/cve-2020-8554). You'll notice the `Service` in v1 of the app has an `externalIPs` attribute which triggers a policy violation on all clusters. You can use the Web Terminal to find the affected `Service` across all clusters by running:
+```bash
+searc kind:Service name:deployment-example
+```
+
+
+4. Release `v2` to your feature candidate cluster to address the vulnerability:
 ```bash
 ./run-deployment.sh -v v2-alpha
 ```
-After reconciliation, refreshing on the load balancer should show that your feature candidate cluster has been upgraded to `v2` of the app.
-4. Release `v2` to stable clusters:
+
+After reconciliation, refreshing on the load balancer should show that your feature candidate cluster has been upgraded to `v2` of the app. Notice (after a minute) that the Policy violations decreases by one.
+
+4. Release `v2` to stable clusters, to address remaining policy violations:
 ```bash
 ./run-deployment.sh -v v2
 ```

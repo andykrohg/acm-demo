@@ -1,0 +1,20 @@
+---
+- hosts: localhost
+  tasks: 
+  - name: Create Config Map
+    shell: |
+      oc create configmap console-custom-logo --from-file logo-{{ cloud }}.png -n openshift-config
+
+  - name: Patch Console object
+    k8s:
+      definition: |
+        apiVersion: operator.openshift.io/v1
+        kind: Console
+        metadata:
+          name: cluster
+        spec:
+          customization:
+            customLogoFile:
+              key: 'logo-{{ cloud }}.png'
+              name: console-custom-logo
+      
