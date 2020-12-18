@@ -26,6 +26,7 @@ ansible-playbook ansible-hook/setup/main.yml
 ```
 
 This will apply `v1` of the app to your `feature-candidate` cluster. The `AnsibleJob` should run and update the `ConfigMap` of the load balancer to target your newly deployed app. This probably takes about 4 minutes. Refresh the load balancer route in your browser to see that it's now resolving.
+
 2. Release `v1` to stable clusters:
 ```bash
 ./run-deployment.sh -v v1
@@ -46,7 +47,7 @@ searc kind:Service name:deployment-example
 
 After reconciliation, refreshing on the load balancer should show that your feature candidate cluster has been upgraded to `v2` of the app. Notice (after a minute) that the Policy violations decreases by one.
 
-4. Release `v2` to stable clusters, to address remaining policy violations:
+5. Release `v2` to stable clusters, to address remaining policy violations:
 ```bash
 ./run-deployment.sh -v v2
 ```
