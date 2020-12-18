@@ -36,7 +36,7 @@ This will apply `v1` of the app to all managed clusters (both `feature-candidate
 
 3. Go to Govern risk in ACM and enable the **external-ips** policy. To illustrate control over [this vulnerability](https://access.redhat.com/security/cve/cve-2020-8554). You'll notice the `Service` in v1 of the app has an `externalIPs` attribute which triggers a policy violation on all clusters. You can use the Web Terminal to find the affected `Service` across all clusters by running:
 ```bash
-searc kind:Service name:deployment-example
+search kind:Service name:deployment-example
 ```
 
 
